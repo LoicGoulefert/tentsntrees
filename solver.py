@@ -6,6 +6,8 @@ GRASS = 1
 TENT = 2
 TREE = 3
 
+k4_neighbours_coords = [(-1, 0), (0, 1), (1, 0), (0, -1)]
+
 def solve(grid):
     """ Simple algorithm using the rules of the game
     to solve the grid.
@@ -88,18 +90,21 @@ def solve(grid):
                     neighbours = grid.get_neighbours(x, y)
                     empty_count = np.sum([1 for cell in neighbours if cell == EMPTY])
                     if TENT not in neighbours and empty_count == 1:
-                        # impossible right now, bad coords system
-                        pass
+                        empty_index = neighbours.index(EMPTY)
+                        n_x = x + k4_neighbours_coords[empty_index][0]
+                        n_y = y + k4_neighbours_coords[empty_index][1]
+                        grid.grid[n_x][n_y] = TENT
 
         if np.array_equal(previous_grid, grid.grid):
             print("Couldn't solve.")
             break
         else:
             previous_grid = np.copy(grid.grid)
-        
         solved = not any(0 in cell for cell in grid.grid)
+
     if solved is True:
         print("Solved !")
+
 
 if __name__ == "__main__":
     grid = Grid(7)
