@@ -2,7 +2,7 @@ import pygame
 from grid import Grid
 from solver import solve
 
-main_resolution = (640, 550)
+main_resolution = (720, 640)
 grid_resolution = (500, 500)
 green = (63, 224, 87)
 black = (14, 15, 18)
@@ -14,15 +14,17 @@ purple = (138, 5, 153)
 def draw_grid(grid, window):
     grid_size = grid.dim
     width, height = grid_resolution
-    offset = 10
+    offset = 50
     margin = 4
     cell_size = int((width - 2 * offset - (grid_size - 1) * margin) / grid_size)
     step = cell_size + 5
     coord_x, coord_y = 0, 0
+    font = pygame.font.SysFont("ubuntumono", cell_size // 2)
 
-    for x in range(offset, height - cell_size, step):
+    # Draw cells' colors
+    for y in range(offset, height - cell_size, step):
         coord_y = 0
-        for y in range(offset, width - cell_size, step):
+        for x in range(offset, width - cell_size, step):
             cell = pygame.Rect(x, y, cell_size, cell_size)
             if grid.grid[coord_x][coord_y] == 0:
                 pygame.draw.rect(window, black, cell)
@@ -35,10 +37,20 @@ def draw_grid(grid, window):
             coord_y += 1
         coord_x += 1
     
+    # Draw cells' borders
     for x in range(offset, height - cell_size, step):
         for y in range(offset, width - cell_size, step):
             cell = pygame.Rect(x, y, cell_size, cell_size)
             pygame.draw.rect(window, black, cell, 2)
+
+    # Display 
+    for y, row_constraint in zip(range(offset + (cell_size // 4), height - cell_size, step), grid.row_constraints):
+        text = font.render(str(row_constraint), True, black)
+        window.blit(text, [offset // 3, y])
+    
+    for x, col_constraint in zip(range(offset + (cell_size // 3), height - cell_size, step), grid.col_constraints):
+        text = font.render(str(col_constraint), True, black)
+        window.blit(text, [x, offset - text.get_height()])
 
 if __name__ == "__main__":
     pygame.init()
