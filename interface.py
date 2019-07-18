@@ -18,28 +18,28 @@ def draw_grid(grid, window):
     margin = 4
     cell_size = int((width - 2 * offset - (grid_size - 1) * margin) / grid_size)
     step = cell_size + 5
-    coord_x, coord_y = 0, 0
     font = pygame.font.SysFont("ubuntumono", cell_size // 2)
 
     # Draw cells' colors
-    for y in range(offset, height - cell_size, step):
-        coord_y = 0
-        for x in range(offset, width - cell_size, step):
-            cell = pygame.Rect(x, y, cell_size, cell_size)
-            if grid.grid[coord_x][coord_y] == 0:
+    coord_x = offset
+    for y in range(grid.dim):
+        coord_y = offset
+        for x in range(grid.dim):
+            cell = pygame.Rect(coord_x, coord_y, cell_size, cell_size)
+            if grid.grid[x][y] == 0:
                 pygame.draw.rect(window, black, cell)
-            if grid.grid[coord_x][coord_y] == 1:
+            if grid.grid[x][y] == 1:
                 pygame.draw.rect(window, green, cell)
-            if grid.grid[coord_x][coord_y] == 2:
+            if grid.grid[x][y] == 2:
                 pygame.draw.rect(window, red, cell)
-            if grid.grid[coord_x][coord_y] == 3:
+            if grid.grid[x][y] == 3:
                 pygame.draw.rect(window, purple, cell)
-            coord_y += 1
-        coord_x += 1
+            coord_y += step
+        coord_x += step
     
     # Draw cells' borders
-    for x in range(offset, height - cell_size, step):
-        for y in range(offset, width - cell_size, step):
+    for x in range(offset, height - offset, step):
+        for y in range(offset, width - offset, step):
             cell = pygame.Rect(x, y, cell_size, cell_size)
             pygame.draw.rect(window, black, cell, 2)
 
@@ -62,7 +62,7 @@ if __name__ == "__main__":
     pygame.init()
     window = pygame.display.set_mode(main_resolution)
     window.fill(green)
-    grid = Grid(5)
+    grid = Grid(10)
     solve(grid)
 
     draw_grid(grid, window)
