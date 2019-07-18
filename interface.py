@@ -43,14 +43,20 @@ def draw_grid(grid, window):
             cell = pygame.Rect(x, y, cell_size, cell_size)
             pygame.draw.rect(window, black, cell, 2)
 
-    # Display 
-    for y, row_constraint in zip(range(offset + (cell_size // 4), height - cell_size, step), grid.row_constraints):
+    start = offset + (cell_size // 4)
+    stop = height - cell_size
+    # Display row constraints
+    for y, row_constraint in zip(range(start, stop, step), grid.row_constraints):
         text = font.render(str(row_constraint), True, black)
         window.blit(text, [offset // 3, y])
     
-    for x, col_constraint in zip(range(offset + (cell_size // 3), height - cell_size, step), grid.col_constraints):
+    start = offset + (cell_size // 3)
+    stop = width - cell_size
+    # Display col constraints
+    for x, col_constraint in zip(range(start, stop, step), grid.col_constraints):
         text = font.render(str(col_constraint), True, black)
         window.blit(text, [x, offset - text.get_height()])
+
 
 if __name__ == "__main__":
     pygame.init()
