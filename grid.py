@@ -1,6 +1,10 @@
 import numpy as np
 
 MAX_TRIES = 10
+EMPTY = 0
+GRASS = 1
+TENT = 2
+TREE = 3
 
 class BadGenerationException(Exception):
     """ Get raised if we fail to generate a valid grid
@@ -12,10 +16,6 @@ class BadGenerationException(Exception):
 class Grid():
     def __init__(self, dim):
         """ Creates an empty grid with row and col constraints.
-        0 -> BLANK
-        1 -> GRASS
-        2 -> TENT
-        3 -> TREE
         """
         self.dim = dim
         self.nb_tents = int(3.16 * dim - 10.83)
@@ -40,6 +40,7 @@ class Grid():
         # res += "\ngraph: {}".format(self.graph)
         return res
 
+
     def _place_tents(self, nb_tents):
         for _ in range(nb_tents):
             placed = False
@@ -51,8 +52,8 @@ class Grid():
                 x = np.random.randint(0, self.dim)
                 y = np.random.randint(0, self.dim)
                 neighbours = self.get_neighbours(x, y, k=8)
-                if self.grid[x][y] != 2 and 2 not in neighbours:
-                    self.grid[x][y] = 2
+                if self.grid[x][y] != TENT and TENT not in neighbours:
+                    self.grid[x][y] = TENT
                     placed = True
                 tries += 1
 
@@ -60,7 +61,7 @@ class Grid():
     def _place_trees(self):
         for x in range(self.dim):
             for y in range(self.dim):
-                if self.grid[x][y] == 2:
+                if self.grid[x][y] == TENT:
                     neighbours = self.get_neighbours(x, y)
                     placed = False
                     tries = 0
@@ -71,13 +72,13 @@ class Grid():
                         i = np.random.randint(0, 4)
                         if neighbours[i] == 0:
                             if i == 0:
-                                self.grid[x-1][y] = 3
+                                self.grid[x-1][y] = TREE
                             if i == 1:
-                                self.grid[x][y+1] = 3
+                                self.grid[x][y+1] = TREE
                             if i == 2:
-                                self.grid[x+1][y] = 3
+                                self.grid[x+1][y] = TREE
                             if i == 3:
-                                self.grid[x][y-1] = 3
+                                self.grid[x][y-1] = TREE
                             placed = True
                         tries += 1
 
@@ -85,17 +86,17 @@ class Grid():
     def _remove_tents(self):
         for x in range(self.dim):
             for y in range(self.dim):
-                if self.grid[x][y] == 2:
-                    self.grid[x][y] = 0
+                if self.grid[x][y] == TENT:
+                    self.grid[x][y] = EMPTY
 
 
     def _get_row_col_constraints(self):
         row_constraints = []
         col_constraints = []
         for r in self.grid:
-            row_constraints.append(np.sum([1 for i in r if i == 2], dtype=int))
+            row_constraints.append(np.sum([1 for i in r if i == TENT], dtype=int))
         for c in self.grid.T:
-            col_constraints.append(np.sum([1 for i in c if i == 2], dtype=int))
+            col_constraints.append(np.sum([1 for i in c if i == TENT], dtype=int))
 
         return row_constraints, col_constraints
 
@@ -182,7 +183,7 @@ class Grid():
                 neighbours.append(self.grid[x][y-1])
             
         return neighbours
-
+    
 
 if __name__ == "__main__":
     grid = Grid(5)
