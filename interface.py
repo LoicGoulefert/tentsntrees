@@ -2,14 +2,21 @@ import pygame
 from grid import Grid
 from solver import solve
 
-main_resolution = (720, 640)
+main_resolution = (600, 600)
 grid_resolution = (500, 500)
+
 green = (63, 224, 87)
 black = (14, 15, 18)
 white = (235, 242, 252)
 blue = (73, 85, 196)
 red = (209, 46, 46)
 purple = (138, 5, 153)
+
+EMPTY = 0
+GRASS = 1
+TENT = 2
+TREE = 3
+
 
 def draw_grid(grid, window):
     grid_size = grid.dim
@@ -26,13 +33,13 @@ def draw_grid(grid, window):
         coord_y = offset
         for x in range(grid.dim):
             cell = pygame.Rect(coord_x, coord_y, cell_size, cell_size)
-            if grid.grid[x][y] == 0:
+            if grid.grid[x][y] == EMPTY:
                 pygame.draw.rect(window, black, cell)
-            if grid.grid[x][y] == 1:
+            if grid.grid[x][y] == GRASS:
                 pygame.draw.rect(window, green, cell)
-            if grid.grid[x][y] == 2:
+            if grid.grid[x][y] == TENT:
                 pygame.draw.rect(window, red, cell)
-            if grid.grid[x][y] == 3:
+            if grid.grid[x][y] == TREE:
                 pygame.draw.rect(window, purple, cell)
             coord_y += step
         coord_x += step
@@ -48,7 +55,7 @@ def draw_grid(grid, window):
     # Display row constraints
     for y, row_constraint in zip(range(start, stop, step), grid.row_constraints):
         text = font.render(str(row_constraint), True, black)
-        window.blit(text, [offset // 3, y])
+        window.blit(text, [offset - 2 * text.get_width(), y])
     
     start = offset + (cell_size // 3)
     stop = width - cell_size
@@ -62,12 +69,12 @@ if __name__ == "__main__":
     pygame.init()
     window = pygame.display.set_mode(main_resolution)
     window.fill(green)
-    grid = Grid(10)
+    grid = Grid(8)
     solve(grid)
 
     draw_grid(grid, window)
 
-    pygame.display.flip()  # Actualise l'affichage
+    pygame.display.flip()  # Refresh display
 
     launched = True
 
