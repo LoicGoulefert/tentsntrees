@@ -104,6 +104,8 @@ def solve(grid):
 
     if solved is True:
         print("Solved !")
+    
+    return grid
 
 
 if __name__ == "__main__":
