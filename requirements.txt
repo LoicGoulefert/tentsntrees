@@ -1,3 +1,2 @@
-Numberjack==1.2.0
 numpy==1.18.1
 pygame==1.9.6

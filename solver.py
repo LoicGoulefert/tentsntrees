@@ -1,5 +1,8 @@
-from grid import Grid
 import numpy as np
+from ortools.sat.python import cp_model
+
+from grid import Grid
+
 
 EMPTY = 0
 GRASS = 1
@@ -108,8 +111,75 @@ def solve(grid):
     return grid
 
 
+class SolutionPrinter(cp_model.CpSolverSolutionCallback):
+  """Print intermediate solutions."""
+
+  def __init__(self, cells):
+    cp_model.CpSolverSolutionCallback.__init__(self)
+    self.__cells = cells
+    self.__solution_count = 0
+
+  def OnSolutionCallback(self):
+    self.__solution_count += 1
+    for row in self.__cells:
+        for cell in row:
+            print(f"{self.Value(cell)} ", end=' ')
+        print()
+    print()
+
+  def SolutionCount(self):
+    return self.__solution_count
+
+
+class CSPSolver():
+    def __init__(self, grid):
+        self.grid = grid.grid
+        self.grid_dim = grid.dim
+        self.row_constraints = grid.row_constraints
+        self.col_constraints = grid.col_constraints
+        self.model = self._get_model()
+
+    def _get_model(self):
+        model = cp_model.CpModel()
+
+        # Define variables
+        self.cells = [[model.NewIntVar(GRASS, TREE, f"X_{i}_{j}") for j in range(self.grid_dim)] for i in range(self.grid_dim)]
+
+        # Define constraints
+        # Tree cells
+        for i in range(self.grid_dim):
+            for j in range(self.grid_dim):
+                if self.grid[i][j] == TREE:
+                    model.Add(self.cells[i][j] == TREE) 
+                else:
+                    model.Add(self.cells[i][j] != TREE)
+        
+        # Row constraints
+        row_tents = [[model.NewBoolVar(f"row_tent_{i}_{j}") for j in range(self.grid_dim)] for j in range(self.grid_dim)]
+        for i, row in enumerate(self.cells):
+            for j in range(self.grid_dim):
+                model.Add(self.cells[i][j] == 2).OnlyEnforceIf(row_tents[i][j].Not())
+                model.Add(self.cells[i][j] != 2).OnlyEnforceIf(row_tents[i][j])
+
+            model.Add(sum(row_tents[i]) == self.row_constraints[i])
+        
+        # Columns constraints
+        # for j, col in enumerate(map(list, zip(*self.cells))):
+        #     model.Add(sum([1 if cell == TENT else 0 for cell in col]) == self.col_constraints[j])
+    
+        # 
+
+        return model
+
+    def solve(self):
+        solver = cp_model.CpSolver()
+        solution_printer = SolutionPrinter(self.cells)
+        status = solver.SolveWithSolutionCallback(self.model, solution_printer)
+
+
 if __name__ == "__main__":
-    grid = Grid(7)
-    print(grid)
-    solve(grid)
+    grid = Grid(5)
+    solver = CSPSolver(grid)
+    solver.solve()
+    print("Original grid :")
     print(grid)

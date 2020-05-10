@@ -1,7 +1,5 @@
 import argparse
 
-import pygame
-
 from grid import Grid
 from solver import solve
 from interface import GUI
