@@ -155,19 +155,17 @@ class CSPSolver():
                     model.Add(self.cells[i][j] != TREE)
         
         # Row constraints
-        row_tents = [[model.NewBoolVar(f"row_tent_{i}_{j}") for j in range(self.grid_dim)] for j in range(self.grid_dim)]
-        for i, row in enumerate(self.cells):
+        bool_tents = [[model.NewBoolVar(f"bool_tent_{i}_{j}") for j in range(self.grid_dim)] for i in range(self.grid_dim)]
+        for i in range(self.grid_dim):
             for j in range(self.grid_dim):
-                model.Add(self.cells[i][j] == 2).OnlyEnforceIf(row_tents[i][j].Not())
-                model.Add(self.cells[i][j] != 2).OnlyEnforceIf(row_tents[i][j])
+                model.Add(self.cells[i][j] == 2).OnlyEnforceIf(bool_tents[i][j])
+                model.Add(self.cells[i][j] != 2).OnlyEnforceIf(bool_tents[i][j].Not())
 
-            model.Add(sum(row_tents[i]) == self.row_constraints[i])
+            model.Add(sum(bool_tents[i]) == self.row_constraints[i])
         
         # Columns constraints
-        # for j, col in enumerate(map(list, zip(*self.cells))):
-        #     model.Add(sum([1 if cell == TENT else 0 for cell in col]) == self.col_constraints[j])
-    
-        # 
+        for i, col in enumerate(map(list, zip(*bool_tents))):
+            model.Add(sum(col) == self.col_constraints[i])
 
         return model
 
@@ -178,7 +176,7 @@ class CSPSolver():
 
 
 if __name__ == "__main__":
-    grid = Grid(5)
+    grid = Grid(10)
     solver = CSPSolver(grid)
     solver.solve()
     print("Original grid :")
