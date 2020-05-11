@@ -131,6 +131,81 @@ class SolutionPrinter(cp_model.CpSolverSolutionCallback):
     return self.__solution_count
 
 
+def get_neighbours(array, x, y, k=4):
+        """ Returns a list of 4 (k=4) or 8 (k=8) neighbours
+        of the cell (x, y).
+        
+        k = 4       k = 8
+        _ 0 _       0 1 2
+        3 x 1       7 x 3
+        _ 2 _       6 5 4
+
+        """
+        dim = len(array)
+        neighbours = []
+        if k == 4:
+            if x - 1 < 0:
+                pass
+            else:
+                neighbours.append(array[x-1][y])
+            if y + 1 >= dim:
+                pass
+            else:
+                neighbours.append(array[x][y+1])
+            if x + 1 >= dim:
+                pass
+            else:
+                neighbours.append(array[x+1][y])
+            if y - 1 < 0:
+                pass
+            else:
+                neighbours.append(array[x][y-1])
+            
+        else:
+            # k == 8
+            if x - 1 < 0 or y - 1 < 0:
+                pass
+            else:
+                neighbours.append(array[x-1][y-1])
+            
+            if x - 1 < 0:
+                pass
+            else:
+                neighbours.append(array[x-1][y])
+            
+            if x - 1 < 0 or y + 1 >= dim:
+                pass
+            else:
+                neighbours.append(array[x-1][y+1])
+            
+            if y + 1 >= dim:
+                pass
+            else:
+                neighbours.append(array[x][y+1])
+            
+            if x + 1 >= dim or y + 1 >= dim:
+                pass
+            else:
+                neighbours.append(array[x+1][y+1])
+            
+            if x + 1 >= dim:
+                pass
+            else:
+                neighbours.append(array[x+1][y])
+            
+            if x + 1 >= dim or y - 1 < 0:
+                pass
+            else:
+                neighbours.append(array[x+1][y-1])
+            
+            if y - 1 < 0:
+                pass
+            else:
+                neighbours.append(array[x][y-1])
+            
+        return neighbours
+
+
 class CSPSolver():
     def __init__(self, grid):
         self.grid = grid.grid
@@ -144,6 +219,8 @@ class CSPSolver():
 
         # Define variables
         self.cells = [[model.NewIntVar(GRASS, TREE, f"X_{i}_{j}") for j in range(self.grid_dim)] for i in range(self.grid_dim)]
+        bool_tents = [[model.NewBoolVar(f"bool_tents_{i}_{j}") for j in range(self.grid_dim)] for i in range(self.grid_dim)]
+        bool_trees = [[model.NewBoolVar(f"bool_trees_{i}_{j}") for j in range(self.grid_dim)] for i in range(self.grid_dim)]
 
         # Define constraints
         # Tree cells
@@ -154,18 +231,31 @@ class CSPSolver():
                 else:
                     model.Add(self.cells[i][j] != TREE)
         
-        # Row constraints
-        bool_tents = [[model.NewBoolVar(f"bool_tent_{i}_{j}") for j in range(self.grid_dim)] for i in range(self.grid_dim)]
+        # Set up tent and tree's boolean variables
         for i in range(self.grid_dim):
             for j in range(self.grid_dim):
-                model.Add(self.cells[i][j] == 2).OnlyEnforceIf(bool_tents[i][j])
-                model.Add(self.cells[i][j] != 2).OnlyEnforceIf(bool_tents[i][j].Not())
-
+                model.Add(self.cells[i][j] == TENT).OnlyEnforceIf(bool_tents[i][j])
+                model.Add(self.cells[i][j] != TENT).OnlyEnforceIf(bool_tents[i][j].Not())
+                model.Add(self.cells[i][j] == TREE).OnlyEnforceIf(bool_trees[i][j])
+                model.Add(self.cells[i][j] != TREE).OnlyEnforceIf(bool_trees[i][j].Not())
+        
+        # Row constraints
+        for i in range(self.grid_dim):
             model.Add(sum(bool_tents[i]) == self.row_constraints[i])
         
         # Columns constraints
         for i, col in enumerate(map(list, zip(*bool_tents))):
             model.Add(sum(col) == self.col_constraints[i])
+
+        for i in range(self.grid_dim):
+            for j in range(self.grid_dim):
+                # One tent per tree
+                four_neighbours = get_neighbours(bool_tents, i, j)
+                model.Add(sum(four_neighbours) >= 1).OnlyEnforceIf(bool_trees[i][j])
+
+                # Two tents cannot touch
+                eight_neighbours = get_neighbours(bool_tents, i, j, k=8)
+                model.Add(sum(eight_neighbours) == 0).OnlyEnforceIf(bool_tents[i][j])
 
         return model
 
