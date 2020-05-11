@@ -1,13 +1,14 @@
 import argparse
 
 from grid import Grid
-from solver import solve
+from solver import solve, CSPSolver
 from interface import GUI
 
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-gd", "--grid-dimension", help="specify the grid dimension", type=int)
+    parser.add_argument("-s", "--solver", choices=["naive", "cpsat"], help="specify the solver to use", type=str)
     
     args = parser.parse_args()
     
@@ -16,9 +17,13 @@ def main():
     else:
         grid = Grid()
 
-    solved_grid = solve(grid)
-    gui = GUI(solved_grid)
-    gui.display()
+    if args.solver == "naive":
+        solved_grid = solve(grid)
+        gui = GUI(solved_grid)
+        gui.display()
+    else:
+        solver = CSPSolver(grid)
+        solver.solve(use_gui=True)
 
 
 if __name__ == "__main__":

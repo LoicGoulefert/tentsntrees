@@ -2,6 +2,7 @@ import numpy as np
 from ortools.sat.python import cp_model
 
 from grid import Grid
+from interface import GUI
 
 
 EMPTY = 0
@@ -208,7 +209,7 @@ def get_neighbours(array, x, y, k=4):
 
 class CSPSolver():
     def __init__(self, grid):
-        self.grid = grid.grid
+        self.grid = grid
         self.grid_dim = grid.dim
         self.row_constraints = grid.row_constraints
         self.col_constraints = grid.col_constraints
@@ -226,7 +227,7 @@ class CSPSolver():
         # Tree cells
         for i in range(self.grid_dim):
             for j in range(self.grid_dim):
-                if self.grid[i][j] == TREE:
+                if self.grid.grid[i][j] == TREE:
                     model.Add(self.cells[i][j] == TREE) 
                 else:
                     model.Add(self.cells[i][j] != TREE)
@@ -258,16 +259,31 @@ class CSPSolver():
                 model.Add(sum(eight_neighbours) == 0).OnlyEnforceIf(bool_tents[i][j])
 
         return model
+    
+    def _fill_grid(self, solver):
+        for i in range(self.grid_dim):
+            for j in range(self.grid_dim):
+                self.grid.grid[i][j] = solver.Value(self.cells[i][j])
 
-    def solve(self):
+    def solve(self, use_gui=False):
         solver = cp_model.CpSolver()
-        solution_printer = SolutionPrinter(self.cells)
-        status = solver.SolveWithSolutionCallback(self.model, solution_printer)
+
+        if use_gui:
+            solver.Solve(self.model)
+            self._fill_grid(solver)
+            gui = GUI(self.grid)
+            gui.display()
+        else:
+            print("Solved grid :")
+            solution_printer = SolutionPrinter(self.cells)
+            status = solver.SolveWithSolutionCallback(self.model, solution_printer)
 
 
 if __name__ == "__main__":
     grid = Grid(10)
-    solver = CSPSolver(grid)
-    solver.solve()
     print("Original grid :")
     print(grid)
+    print()
+
+    solver = CSPSolver(grid)
+    solver.solve(use_gui=False)

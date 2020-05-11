@@ -2,7 +2,6 @@ import os
 os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 import pygame
 from grid import Grid
-from solver import solve
 
 main_resolution = (600, 600)
 grid_resolution = (500, 500)

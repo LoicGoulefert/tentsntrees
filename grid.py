@@ -29,7 +29,8 @@ class Grid():
                 self._remove_tents()
                 done_generating = True
             except BadGenerationException:
-                print("Generating again...")
+                # print("Generating again...")
+                pass
         self.graph = self._build_graph()
 
 
