@@ -1,7 +1,7 @@
 import numpy as np
 from ortools.sat.python import cp_model
 
-from grid import Grid
+from grid import Grid, get_neighbours
 from interface import GUI
 
 
@@ -12,10 +12,9 @@ TREE = 3
 
 k4_neighbours_coords = [(-1, 0), (0, 1), (1, 0), (0, -1)]
 
-def solve(grid):
-    """ Simple algorithm using the rules of the game
-    to solve the grid.
-    """
+def naive_solve(grid):
+    """ Simple algorithm using the rules of the game to solve the grid. """
+
     dim = grid.dim
     solved = False
     previous_grid = np.copy(grid.grid)
@@ -56,7 +55,7 @@ def solve(grid):
         for x in range(dim):
             for y in range(dim):
                 if grid.grid[x][y] == EMPTY:
-                    neighbours = grid.get_neighbours(x, y)
+                    neighbours = get_neighbours(grid.grid, x, y, filter_none_values=False)
                     if TREE not in neighbours:
                         grid.grid[x][y] = GRASS
 
@@ -83,7 +82,7 @@ def solve(grid):
         for x in range(dim):
             for y in range(dim):
                 if grid.grid[x][y] == EMPTY:
-                    neighbours = grid.get_neighbours(x, y, k=8)
+                    neighbours = get_neighbours(grid.grid, x, y, filter_none_values=False, k=8)
                     if TENT in neighbours:
                         grid.grid[x][y] = GRASS
         
@@ -91,7 +90,7 @@ def solve(grid):
         for x in range(dim):
             for y in range(dim):
                 if grid.grid[x][y] == TREE:
-                    neighbours = grid.get_neighbours(x, y)
+                    neighbours = get_neighbours(grid.grid, x, y, filter_none_values=False)
                     empty_count = np.sum([1 for cell in neighbours if cell == EMPTY])
                     if TENT not in neighbours and empty_count == 1:
                         empty_index = neighbours.index(EMPTY)
@@ -130,81 +129,6 @@ class SolutionPrinter(cp_model.CpSolverSolutionCallback):
 
   def SolutionCount(self):
     return self.__solution_count
-
-
-def get_neighbours(array, x, y, k=4):
-        """ Returns a list of 4 (k=4) or 8 (k=8) neighbours
-        of the cell (x, y).
-        
-        k = 4       k = 8
-        _ 0 _       0 1 2
-        3 x 1       7 x 3
-        _ 2 _       6 5 4
-
-        """
-        dim = len(array)
-        neighbours = []
-        if k == 4:
-            if x - 1 < 0:
-                pass
-            else:
-                neighbours.append(array[x-1][y])
-            if y + 1 >= dim:
-                pass
-            else:
-                neighbours.append(array[x][y+1])
-            if x + 1 >= dim:
-                pass
-            else:
-                neighbours.append(array[x+1][y])
-            if y - 1 < 0:
-                pass
-            else:
-                neighbours.append(array[x][y-1])
-            
-        else:
-            # k == 8
-            if x - 1 < 0 or y - 1 < 0:
-                pass
-            else:
-                neighbours.append(array[x-1][y-1])
-            
-            if x - 1 < 0:
-                pass
-            else:
-                neighbours.append(array[x-1][y])
-            
-            if x - 1 < 0 or y + 1 >= dim:
-                pass
-            else:
-                neighbours.append(array[x-1][y+1])
-            
-            if y + 1 >= dim:
-                pass
-            else:
-                neighbours.append(array[x][y+1])
-            
-            if x + 1 >= dim or y + 1 >= dim:
-                pass
-            else:
-                neighbours.append(array[x+1][y+1])
-            
-            if x + 1 >= dim:
-                pass
-            else:
-                neighbours.append(array[x+1][y])
-            
-            if x + 1 >= dim or y - 1 < 0:
-                pass
-            else:
-                neighbours.append(array[x+1][y-1])
-            
-            if y - 1 < 0:
-                pass
-            else:
-                neighbours.append(array[x][y-1])
-            
-        return neighbours
 
 
 class CSPSolver():

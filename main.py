@@ -1,7 +1,7 @@
 import argparse
 
 from grid import Grid
-from solver import solve, CSPSolver
+from solver import naive_solve, CSPSolver
 from interface import GUI
 
 
@@ -18,7 +18,7 @@ def main():
         grid = Grid()
 
     if args.solver == "naive":
-        solved_grid = solve(grid)
+        solved_grid = naive_solve(grid)
         gui = GUI(solved_grid)
         gui.display()
     else:
