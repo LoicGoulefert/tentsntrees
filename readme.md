@@ -1,6 +1,7 @@
 # Tents and trees solver
 
-Solving [this game](https://play.google.com/store/apps/details?id=com.frozax.tentsandtrees&hl=en_US) using a constraint satisfaction problem solver.
+Solving the Tents and Trees puzzle game ([Android download](https://play.google.com/store/apps/details?id=com.frozax.tentsandtrees&hl=en_US), 
+[iOS download](https://apps.apple.com/app/tents-and-trees-puzzles/id1279378379)) using a constraint satisfaction problem solver.
 
 The goal of this puzzle is to fill the grid with tents and grass. The rules are the following:
 - Each tree must have a tent next to it
