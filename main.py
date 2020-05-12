@@ -7,11 +7,13 @@ from interface import GUI
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("-gd", "--grid-dimension", help="specify the grid dimension", type=int)
-    parser.add_argument("-s", "--solver", choices=["naive", "cpsat"], help="specify the solver to use", type=str)
-    
+    parser.add_argument("-gd", "--grid-dimension",
+                        help="specify the grid dimension", type=int)
+    parser.add_argument(
+        "-s", "--solver", choices=["naive", "cpsat"], help="specify the solver to use", type=str)
+
     args = parser.parse_args()
-    
+
     if args.grid_dimension:
         grid = Grid(args.grid_dimension)
     else:

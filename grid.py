@@ -7,17 +7,17 @@ GRASS = 1
 TENT = 2
 TREE = 3
 
+
 class BadGenerationException(Exception):
-    """ Get raised if we fail to generate a valid grid
-    within MAX_TRIES tentatives.
-    """
+    """ Get raised if we fail to generate a valid grid within MAX_TRIES tentatives. """
+
     pass
 
 
 class Grid():
     def __init__(self, dim):
-        """ Creates an empty grid with row and col constraints.
-        """
+        """ Creates an empty grid with row and col constraints. """
+
         self.dim = dim
         self.nb_tents = int(3.16 * dim - 10.83)
         done_generating = False
@@ -30,14 +30,12 @@ class Grid():
                 self._remove_tents()
                 done_generating = True
             except BadGenerationException:
-                # print("Generating again...")
                 pass
 
     def __str__(self):
         res = str(self.grid)
         res += "\nrow: {}".format(self.row_constraints)
         res += "\ncol: {}".format(self.col_constraints)
-        # res += "\ngraph: {}".format(self.graph)
         return res
 
     def _place_tents(self, nb_tents):
@@ -47,10 +45,11 @@ class Grid():
             while placed is False:
                 if tries > MAX_TRIES:
                     raise BadGenerationException
-                
+
                 x = np.random.randint(0, self.dim)
                 y = np.random.randint(0, self.dim)
-                neighbours = get_neighbours(self.grid, x, y, filter_none_values=False, k=8)
+                neighbours = get_neighbours(
+                    self.grid, x, y, filter_none_values=False, k=8)
                 if self.grid[x][y] != TENT and TENT not in neighbours:
                     self.grid[x][y] = TENT
                     placed = True
@@ -60,13 +59,14 @@ class Grid():
         for x in range(self.dim):
             for y in range(self.dim):
                 if self.grid[x][y] == TENT:
-                    neighbours = get_neighbours(self.grid, x, y, filter_none_values=False)
+                    neighbours = get_neighbours(
+                        self.grid, x, y, filter_none_values=False)
                     placed = False
                     tries = 0
                     while placed is False:
                         if tries > MAX_TRIES:
                             raise BadGenerationException
-                        
+
                         i = np.random.randint(0, 4)
                         if neighbours[i] == 0:
                             if i == 0:
@@ -90,9 +90,11 @@ class Grid():
         row_constraints = []
         col_constraints = []
         for r in self.grid:
-            row_constraints.append(np.sum([1 for i in r if i == TENT], dtype=int))
+            row_constraints.append(
+                np.sum([1 for i in r if i == TENT], dtype=int))
         for c in self.grid.T:
-            col_constraints.append(np.sum([1 for i in c if i == TENT], dtype=int))
+            col_constraints.append(
+                np.sum([1 for i in c if i == TENT], dtype=int))
 
         return row_constraints, col_constraints
 
@@ -100,7 +102,7 @@ class Grid():
 def get_neighbours(array, x, y, filter_none_values=True, k=4):
     """ Returns a list of 4 (k=4) or 8 (k=8) neighbours
     of the cell (x, y).
-    
+
     k = 4       k = 8
     _ 0 _       0 1 2
     3 x 1       7 x 3
@@ -126,55 +128,50 @@ def get_neighbours(array, x, y, filter_none_values=True, k=4):
             neighbours.append(None)
         else:
             neighbours.append(array[x][y-1])
-        
+
     else:
         # k == 8
         if x - 1 < 0 or y - 1 < 0:
             neighbours.append(None)
         else:
             neighbours.append(array[x-1][y-1])
-        
+
         if x - 1 < 0:
             neighbours.append(None)
         else:
             neighbours.append(array[x-1][y])
-        
+
         if x - 1 < 0 or y + 1 >= dim:
             neighbours.append(None)
         else:
             neighbours.append(array[x-1][y+1])
-        
+
         if y + 1 >= dim:
             neighbours.append(None)
         else:
             neighbours.append(array[x][y+1])
-        
+
         if x + 1 >= dim or y + 1 >= dim:
             neighbours.append(None)
         else:
             neighbours.append(array[x+1][y+1])
-        
+
         if x + 1 >= dim:
             neighbours.append(None)
         else:
             neighbours.append(array[x+1][y])
-        
+
         if x + 1 >= dim or y - 1 < 0:
             neighbours.append(None)
         else:
             neighbours.append(array[x+1][y-1])
-        
+
         if y - 1 < 0:
             neighbours.append(None)
         else:
             neighbours.append(array[x][y-1])
-    
+
     if filter_none_values:
         neighbours = [n for n in neighbours if n]
 
     return neighbours
-    
-
-if __name__ == "__main__":
-    grid = Grid(5)
-    print(grid)
