@@ -19,7 +19,7 @@ The goal of this puzzle is to fill the grid with tents and grass. The rules are 
 *Output example of this program. Purple = tree, red = tent, green = grass.*
 
 
-## Installation
+## Installation
 
 This project is using python 3.6.9, and has been tested in an Ubuntu 18.04 environment.
 
