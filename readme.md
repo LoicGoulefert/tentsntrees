@@ -9,9 +9,14 @@ The goal of this puzzle is to fill the grid with tents and grass. The rules are 
 - Numbers on the edge of the grid specify how many tents there is on each row / column
 
 
-![Original application instance](img/tentsntrees_original.png)   ![Output example](img/solved_7x7.png)
+![Original application instance](img/tentsntrees_original.png)
 
-**Left: original application. Right: output example of this program. Purple = tree, red = tent, green = grass.**
+*Original application screenshot.*
+
+
+![Output example](img/solved_7x7.png)
+
+*Output example of this program. Purple = tree, red = tent, green = grass.*
 
 
 ## Installation
