@@ -3,8 +3,8 @@ os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 import pygame
 from grid import Grid
 
-main_resolution = (600, 600)
-grid_resolution = (500, 500)
+main_resolution = (640, 640)
+grid_resolution = (600, 600)
 
 green = (63, 224, 87)
 black = (14, 15, 18)
@@ -29,7 +29,7 @@ class GUI:
     def _draw_grid(self):
         grid_size = self.grid.dim
         width, height = grid_resolution
-        offset = 50
+        offset = 110
         margin = 4
         cell_size = int((width - 2 * offset - (grid_size - 1) * margin) / grid_size)
         step = cell_size + 5
