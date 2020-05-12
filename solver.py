@@ -175,12 +175,17 @@ class CSPSolver():
         for i in range(self.grid_dim):
             for j in range(self.grid_dim):
                 # One tent per tree
-                four_neighbours = get_neighbours(bool_tents, i, j)
-                model.Add(sum(four_neighbours) >= 1).OnlyEnforceIf(bool_trees[i][j])
+                tent_four_neighbours = get_neighbours(bool_tents, i, j)
+                model.Add(sum(tent_four_neighbours) >= 1).OnlyEnforceIf(bool_trees[i][j])
+
+                # One tree per tent
+                tree_four_neighbours = get_neighbours(bool_trees, i, j)
+                model.Add(sum(tree_four_neighbours) >= 1).OnlyEnforceIf(bool_tents[i][j])
 
                 # Two tents cannot touch
                 eight_neighbours = get_neighbours(bool_tents, i, j, k=8)
                 model.Add(sum(eight_neighbours) == 0).OnlyEnforceIf(bool_tents[i][j])
+                model.Add(sum(eight_neighbours) >= 0).OnlyEnforceIf(bool_tents[i][j].Not())
 
         return model
     
