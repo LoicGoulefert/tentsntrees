@@ -1,4 +1,6 @@
 import argparse
+import os
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 
 from grid import Grid
 from solver import naive_solve, CSPSolver
