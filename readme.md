@@ -49,4 +49,4 @@ optional arguments:
 ```
 
 
-For example, the command `python main.py --gd 10 --s cpsat` will solve and display a random 10x10 grid.
+For example, the command `python main.py -gd 10 -s cpsat` will solve and display a random 10x10 grid.
