@@ -33,20 +33,22 @@ pip install -r requirements.txt
 
 ## Usage
 
-There are 2 solvers available. The first one is a "naive" solver, and can solve the easiest (low grid dimension) problem's instances. 
-The second solver is CP-SAT, the constraint satisfaction solver from Google's `ortools`. It solves all instances of the problem, 
-and is only time-limited by the size of the problem's grid.
-
 ```
-usage: main.py [-h] [-gd GRID_DIMENSION] [-s {naive,cpsat}]
+usage: main.py [-h] [-gd GRID_DIMENSION]
 
 optional arguments:
   -h, --help            show this help message and exit
   -gd GRID_DIMENSION, --grid-dimension GRID_DIMENSION
                         specify the grid dimension
-  -s {naive,cpsat}, --solver {naive,cpsat}
-                        specify the solver to use
 ```
 
 
-For example, the command `python main.py -gd 10 -s cpsat` will solve and display a random 10x10 grid.
+For example, the command `python main.py -gd 10` will solve and display a random 10x10 grid.
+
+
+## Files
+
+- `src/main.py`: entry point
+- `src/grid.py`: grid object definition
+- `src/interface.py`: PyGame GUI
+- `src/solver.py`: CSP Model and solver
