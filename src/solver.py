@@ -1,6 +1,5 @@
 from typing import List
 
-import numpy as np
 from ortools.sat.python import cp_model
 
 from grid import Grid, get_neighbours
