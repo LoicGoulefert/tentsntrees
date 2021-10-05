@@ -1,7 +1,9 @@
 from grid import Grid
 import pygame
+from pygame.transform import scale
 import os
-os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
+
+os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "hide"
 
 main_resolution = (640, 640)
 grid_resolution = (600, 600)
@@ -20,7 +22,7 @@ TREE = 3
 
 
 class GUI:
-    """ Graphic interface, used to display a Grid object using PyGame. """
+    """Graphic interface, used to display a Grid object using PyGame."""
 
     def __init__(self, grid):
         self.grid = grid
@@ -28,14 +30,19 @@ class GUI:
         pygame.init()
         self.window = pygame.display.set_mode(main_resolution)
         self.window.fill(green)
+        self.tent_img = pygame.image.load(
+            os.path.join("img", "tent-icon.jpg")
+        ).convert()
+        self.tree_img = pygame.image.load(
+            os.path.join("img", "tree-icon.png")
+        ).convert()
 
     def _draw_grid(self):
         grid_size = self.grid.dim
         width, height = grid_resolution
         offset = 110
         margin = 4
-        cell_size = int(
-            (width - 2 * offset - (grid_size - 1) * margin) / grid_size)
+        cell_size = int((width - 2 * offset - (grid_size - 1) * margin) / grid_size)
         step = cell_size + 5
         font = pygame.font.SysFont("ubuntumono", cell_size // 2)
 
@@ -50,9 +57,11 @@ class GUI:
                 elif self.grid.grid[x][y] == GRASS:
                     pygame.draw.rect(self.window, green, cell)
                 elif self.grid.grid[x][y] == TENT:
-                    pygame.draw.rect(self.window, red, cell)
+                    # pygame.draw.rect(self.window, red, cell)
+                    self.window.blit(scale(self.tent_img, (cell_size, cell_size)), cell)
                 elif self.grid.grid[x][y] == TREE:
-                    pygame.draw.rect(self.window, purple, cell)
+                    # pygame.draw.rect(self.window, purple, cell)
+                    self.window.blit(scale(self.tree_img, (cell_size, cell_size)), cell)
                 coord_y += step
             coord_x += step
 
@@ -65,14 +74,18 @@ class GUI:
         start = offset + (cell_size // 4)
         stop = height - cell_size
         # Display row constraints
-        for y, row_constraint in zip(range(start, stop, step), self.grid.row_constraints):
+        for y, row_constraint in zip(
+            range(start, stop, step), self.grid.row_constraints
+        ):
             text = font.render(str(row_constraint), True, black)
             self.window.blit(text, [offset - 2 * text.get_width(), y])
 
         start = offset + (cell_size // 3)
         stop = width - cell_size
         # Display col constraints
-        for x, col_constraint in zip(range(start, stop, step), self.grid.col_constraints):
+        for x, col_constraint in zip(
+            range(start, stop, step), self.grid.col_constraints
+        ):
             text = font.render(str(col_constraint), True, black)
             self.window.blit(text, [x, offset - text.get_height()])
 
