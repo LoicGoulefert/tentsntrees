@@ -8,15 +8,9 @@ from grid import Grid
 
 os.environ["PYGAME_HIDE_SUPPORT_PROMPT"] = "hide"
 
-main_resolution = (640, 640)
-grid_resolution = (600, 600)
-
+main_resolution = (800, 800)
 green = (63, 224, 87)
 black = (14, 15, 18)
-white = (235, 242, 252)
-blue = (73, 85, 196)
-red = (209, 46, 46)
-purple = (138, 5, 153)
 
 EMPTY = 0
 GRASS = 1
@@ -28,7 +22,6 @@ class GUI:
     """Graphic interface, used to display a Grid object using PyGame."""
 
     def __init__(self, grid: Grid):
-        print(type(grid))
         self.grid = grid
         pygame.init()
         self.window = pygame.display.set_mode(main_resolution)
@@ -42,14 +35,14 @@ class GUI:
 
     def _draw_grid(self):
         grid_size = self.grid.dim
-        width, height = grid_resolution
-        offset = 110
+        width, height = main_resolution
+        offset = 50
         margin = 4
         cell_size = int((width - 2 * offset - (grid_size - 1) * margin) / grid_size)
         step = cell_size + 5
         font = pygame.font.SysFont("ubuntumono", cell_size // 2)
 
-        # Draw cells' colors
+        # Draw cells colors
         coord_x = offset
         for y in range(grid_size):
             coord_y = offset
@@ -66,7 +59,7 @@ class GUI:
                 coord_y += step
             coord_x += step
 
-        # Draw cells' borders
+        # Draw cells borders
         for x in range(offset, height - offset, step):
             for y in range(offset, width - offset, step):
                 cell = pygame.Rect(x, y, cell_size, cell_size)
@@ -74,6 +67,7 @@ class GUI:
 
         start = offset + (cell_size // 4)
         stop = height - cell_size
+
         # Display row constraints
         for y, row_constraint in zip(
             range(start, stop, step), self.grid.row_constraints
@@ -106,4 +100,4 @@ class GUI:
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_ESCAPE:
                         launched = False
-            time.sleep(0.5)
+            time.sleep(0.1)
