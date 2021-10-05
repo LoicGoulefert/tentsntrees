@@ -121,65 +121,65 @@ def get_neighbours(
     neighbours = []
     if k == 4:
         if x - 1 < 0:
-            neighbours.append(None)
+            neighbours.append(-1)
         else:
             neighbours.append(array[x - 1][y])
         if y + 1 >= dim:
-            neighbours.append(None)
+            neighbours.append(-1)
         else:
             neighbours.append(array[x][y + 1])
         if x + 1 >= dim:
-            neighbours.append(None)
+            neighbours.append(-1)
         else:
             neighbours.append(array[x + 1][y])
         if y - 1 < 0:
-            neighbours.append(None)
+            neighbours.append(-1)
         else:
             neighbours.append(array[x][y - 1])
 
     else:
         # k == 8
         if x - 1 < 0 or y - 1 < 0:
-            neighbours.append(None)
+            neighbours.append(-1)
         else:
             neighbours.append(array[x - 1][y - 1])
 
         if x - 1 < 0:
-            neighbours.append(None)
+            neighbours.append(-1)
         else:
             neighbours.append(array[x - 1][y])
 
         if x - 1 < 0 or y + 1 >= dim:
-            neighbours.append(None)
+            neighbours.append(-1)
         else:
             neighbours.append(array[x - 1][y + 1])
 
         if y + 1 >= dim:
-            neighbours.append(None)
+            neighbours.append(-1)
         else:
             neighbours.append(array[x][y + 1])
 
         if x + 1 >= dim or y + 1 >= dim:
-            neighbours.append(None)
+            neighbours.append(-1)
         else:
             neighbours.append(array[x + 1][y + 1])
 
         if x + 1 >= dim:
-            neighbours.append(None)
+            neighbours.append(-1)
         else:
             neighbours.append(array[x + 1][y])
 
         if x + 1 >= dim or y - 1 < 0:
-            neighbours.append(None)
+            neighbours.append(-1)
         else:
             neighbours.append(array[x + 1][y - 1])
 
         if y - 1 < 0:
-            neighbours.append(None)
+            neighbours.append(-1)
         else:
             neighbours.append(array[x][y - 1])
 
     if filter_none_values:
-        neighbours = [n for n in neighbours if n]
+        neighbours = [n for n in neighbours if n != -1]
 
     return neighbours

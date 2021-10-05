@@ -60,10 +60,8 @@ class GUI:
                 elif self.grid.grid[x][y] == GRASS:
                     pygame.draw.rect(self.window, green, cell)
                 elif self.grid.grid[x][y] == TENT:
-                    # pygame.draw.rect(self.window, red, cell)
                     self.window.blit(scale(self.tent_img, (cell_size, cell_size)), cell)
                 elif self.grid.grid[x][y] == TREE:
-                    # pygame.draw.rect(self.window, purple, cell)
                     self.window.blit(scale(self.tree_img, (cell_size, cell_size)), cell)
                 coord_y += step
             coord_x += step

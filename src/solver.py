@@ -1,3 +1,5 @@
+from typing import List
+
 import numpy as np
 from ortools.sat.python import cp_model
 
@@ -13,7 +15,7 @@ TREE = 3
 class SolutionPrinter(cp_model.CpSolverSolutionCallback):
     """Print intermediate solutions."""
 
-    def __init__(self, cells: Grid):
+    def __init__(self, cells: List[cp_model.CpModel.NewIntVar]):
         cp_model.CpSolverSolutionCallback.__init__(self)
         self.__cells = cells
         self.__solution_count = 0
